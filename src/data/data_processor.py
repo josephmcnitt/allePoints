@@ -6,7 +6,13 @@ It extracts member information including phone numbers and available points.
 """
 
 import pandas as pd
+import logging
 from src.api.alle_api import AlleAPI
+from src.api.alle_scraper import AlleScraper
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class DataProcessor:
     """
@@ -14,8 +20,9 @@ class DataProcessor:
     """
     
     def __init__(self):
-        """Initialize the data processor with an API client."""
+        """Initialize the data processor with an API client and scraper."""
         self.api_client = AlleAPI()
+        self.scraper = AlleScraper()
         self.data = None
     
     def fetch_data(self):
@@ -33,6 +40,28 @@ class DataProcessor:
             self.data = pd.DataFrame(raw_data)
             return self.data
         return pd.DataFrame()
+    
+    def search_by_phone(self, phone_number):
+        """
+        Search for a member by phone number using the Alle scraper.
+        
+        Args:
+            phone_number (str): The phone number to search for.
+            
+        Returns:
+            dict: Dictionary containing member data if found, empty dict otherwise.
+        """
+        logger.info(f"Searching for member with phone number: {phone_number}")
+        
+        # Use the scraper to search for the member
+        member_data = self.scraper.search_by_phone(phone_number)
+        
+        if member_data:
+            logger.info(f"Found member: {member_data.get('name', 'Unknown')}")
+            return member_data
+        else:
+            logger.info(f"No member found with phone number: {phone_number}")
+            return {}
     
     def get_members_with_points(self, min_points=0):
         """
@@ -76,4 +105,9 @@ class DataProcessor:
             'total_points': 0,
             'avg_points': 0,
             'max_points': 0
-        } 
+        }
+    
+    def close(self):
+        """Close the scraper and clean up resources."""
+        if self.scraper:
+            self.scraper.close() 

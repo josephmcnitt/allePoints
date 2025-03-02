@@ -23,8 +23,11 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -100,11 +103,22 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# IDE specific files
+# IDE files
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# Selenium webdriver files
+chromedriver
+geckodriver
+*.log
+
+# Credentials and sensitive information
+credentials.json
+secrets.yaml
+*.pem
+*.key
 
 # Project specific
 config/.env 
